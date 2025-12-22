@@ -28,6 +28,11 @@ api_get "/global-search?search=09%2F12%2F2025&skip=0&take=10"
 
 **Entity Types:** `project`, `package`, `submission`, `boq`, `contractor`
 
+> **💡 Technical Notes:**
+> - **Scoped vs Global**: `/packages`, `/submissions` are scoped endpoints (filtered by project/package). `/global-search` is unscoped and searches across all entities.
+> - **URL Encoding**: Special characters must be URL encoded (e.g., `/` → `%2F`, space → `%20`). Without encoding, the server may misinterpret the URL path.
+> - **Performance**: Global search typically uses full-text indexing (Elasticsearch, PostgreSQL FTS) for fast lookups across large datasets, while scoped endpoints use standard database queries.
+
 ---
 
 ## Projects
