@@ -1,6 +1,7 @@
 #!/bin/bash
 # Tender App API Helper Script
-# Usage: source .claude/skills/tender-api/scripts/api.sh
+# Usage: source ${CLAUDE_PLUGIN_ROOT}/scripts/api.sh
+#    or: source /path/to/tender-api/scripts/api.sh
 
 # Configuration
 TENDER_API_URL="${TENDER_API_URL:-https://tender-api.sipher.gg/api}"

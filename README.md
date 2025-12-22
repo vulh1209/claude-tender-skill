@@ -1,19 +1,42 @@
-# Tender API Skill for Claude Code
+# Tender API Plugin for Claude Code
 
-A Claude Code skill that enables interaction with Tender App backend APIs for construction tender management.
+A Claude Code plugin that enables interaction with Tender App backend APIs for construction tender management.
 
 ## Features
 
+- **Global Search**: Search across projects, packages, submissions, contractors
 - **AI Evaluation**: Analyze documents, generate sign-offs
 - **Price Intelligence**: RAG-based price queries, historical data
 - **Document Comparison**: Excel diff, BOQ comparison
 - **Project Management**: Projects, packages, BOQ items
 - **Submissions**: Tender submissions, evaluations
 
-## Quick Install
+## Installation
+
+### Option 1: Clone to plugins directory (Recommended)
 
 ```bash
-git clone https://github.com/vulh1209/claude-tender-skill.git ~/.claude/skills/tender-api
+# Clone directly to Claude Code plugins
+git clone https://github.com/vulh1209/claude-tender-skill.git ~/.claude/plugins/tender-api
+```
+
+### Option 2: Symlink from development location
+
+```bash
+# If you have the repo elsewhere, create a symlink
+ln -s /path/to/claude-tender-skill ~/.claude/plugins/tender-api
+```
+
+### Option 3: Add to project-specific plugins
+
+Add to your project's `.claude/settings.json`:
+
+```json
+{
+  "plugins": [
+    "/path/to/claude-tender-skill"
+  ]
+}
 ```
 
 ## Setup
@@ -41,46 +64,60 @@ source ~/.zshrc
 
 ### 3. Verify Installation
 
-Open Claude Code and ask:
+Open Claude Code and run:
+
+```
+/tender-setup
+```
+
+Or ask:
 
 ```
 "Check if Tender API is configured correctly"
 ```
 
-## Usage Examples
+## Usage
 
-### List Projects
+### Slash Commands
+
+| Command | Description |
+|---------|-------------|
+| `/tender-search "keyword"` | Quick search across all entities |
+| `/tender-setup` | Set up authentication |
+
+### Natural Language
+
+The `tender-api` skill is automatically triggered when you ask about:
+
+- Finding/searching projects, packages, submissions
+- Tender evaluation or document analysis
+- Price intelligence queries
+- Document comparison
+
+**Examples:**
 
 ```
+"Search for package 09/12/2025"
 "List all projects in Tender App"
-```
-
-### Query Price History
-
-```
 "What are the latest cement prices from price history?"
-```
-
-### Evaluate Submission
-
-```
 "Evaluate submission abc123 for package xyz"
-```
-
-### Compare Documents
-
-```
 "Compare these two Excel files for BOQ differences"
 ```
 
 ## Directory Structure
 
 ```
-claude-tender-skill/
-├── SKILL.md              # Main skill definition (required)
+tender-api/
+├── plugin.json           # Plugin manifest
 ├── README.md             # This file
+├── SKILL.md              # Legacy skill definition
+├── skills/
+│   └── tender-api.md     # Main skill
+├── commands/
+│   ├── tender-search.md  # /tender-search command
+│   └── tender-setup.md   # /tender-setup command
 ├── scripts/
-│   └── api.sh            # Helper functions for API calls
+│   └── api.sh            # API helper functions
 └── references/
     ├── AUTH.md           # Authentication guide
     ├── CLI-TOKEN.md      # Token management API
@@ -113,6 +150,12 @@ claude-tender-skill/
 
 ## Troubleshooting
 
+### Plugin Not Detected
+
+1. Verify plugin location: `ls ~/.claude/plugins/tender-api/plugin.json`
+2. Restart Claude Code session
+3. Check plugin.json syntax is valid JSON
+
 ### Token Not Found
 
 ```bash
@@ -121,16 +164,18 @@ echo $TENDER_CLI_TOKEN
 # Should output: tnd_xxxxx...
 ```
 
+### Skill Not Triggering
+
+Make sure you have sourced the API helper:
+```bash
+source ~/.claude/plugins/tender-api/scripts/api.sh
+```
+
 ### Permission Denied on Script
 
 ```bash
-chmod +x ~/.claude/skills/tender-api/scripts/api.sh
+chmod +x ~/.claude/plugins/tender-api/scripts/api.sh
 ```
-
-### Skill Not Detected
-
-1. Verify skill location: `ls ~/.claude/skills/tender-api/SKILL.md`
-2. Restart Claude Code session
 
 ## Security
 
