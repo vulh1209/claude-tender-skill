@@ -8,7 +8,7 @@ Compare Excel files and analyze differences.
 Advanced comparison using LCS + pair scoring algorithm.
 
 ```bash
-api_post "excel-diff/v3/compare" '{
+api_post "/excel-diff/v3/compare" '{
   "fileData1": "<base64-encoded-xlsx>",
   "fileData2": "<base64-encoded-xlsx>"
 }'
@@ -75,7 +75,7 @@ FILE1_B64=$(base64 -i file1.xlsx)
 FILE2_B64=$(base64 -i file2.xlsx)
 
 # 2. Compare
-api_post "excel-diff/v3/compare" '{
+api_post "/excel-diff/v3/compare" '{
   "fileData1": "'$FILE1_B64'",
   "fileData2": "'$FILE2_B64'"
 }'
@@ -85,15 +85,15 @@ api_post "excel-diff/v3/compare" '{
 
 ```bash
 # 1. Get submission files
-SUBMISSION1=$(api_get "submissions/$SUB1_ID")
-SUBMISSION2=$(api_get "submissions/$SUB2_ID")
+SUBMISSION1=$(api_get "/submissions/$SUB1_ID")
+SUBMISSION2=$(api_get "/submissions/$SUB2_ID")
 
 # 2. Download file data
-FILE1_DATA=$(api_get "files/$(echo $SUBMISSION1 | jq -r '.data.fileIds[0]')/download" | base64)
-FILE2_DATA=$(api_get "files/$(echo $SUBMISSION2 | jq -r '.data.fileIds[0]')/download" | base64)
+FILE1_DATA=$(api_get "/files/$(echo $SUBMISSION1 | jq -r '.data.fileIds[0]')/download" | base64)
+FILE2_DATA=$(api_get "/files/$(echo $SUBMISSION2 | jq -r '.data.fileIds[0]')/download" | base64)
 
 # 3. Compare
-api_post "excel-diff/v3/compare" '{
+api_post "/excel-diff/v3/compare" '{
   "fileData1": "'$FILE1_DATA'",
   "fileData2": "'$FILE2_DATA'"
 }'
@@ -115,8 +115,8 @@ Compare different versions of Bill of Quantities.
 
 ```bash
 # Get two BOQ revisions
-BOQ_V1=$(api_get "boq/id/$BOQ_ID")
-BOQ_V2=$(api_get "boq/id/$BOQ_ID_V2")
+BOQ_V1=$(api_get "/boq/id/$BOQ_ID")
+BOQ_V2=$(api_get "/boq/id/$BOQ_ID_V2")
 
 # Export to Excel and compare
 # (Frontend handles Excel export)
@@ -127,13 +127,13 @@ Compare contractor submission against reference BOQ.
 
 ```bash
 # Get reference BOQ file
-REFERENCE_FILE=$(api_get "files/$REF_FILE_ID/download" | base64)
+REFERENCE_FILE=$(api_get "/files/$REF_FILE_ID/download" | base64)
 
 # Get submission file
-SUBMISSION_FILE=$(api_get "files/$SUB_FILE_ID/download" | base64)
+SUBMISSION_FILE=$(api_get "/files/$SUB_FILE_ID/download" | base64)
 
 # Compare
-DIFF=$(api_post "excel-diff/v3/compare" '{
+DIFF=$(api_post "/excel-diff/v3/compare" '{
   "fileData1": "'$REFERENCE_FILE'",
   "fileData2": "'$SUBMISSION_FILE'"
 }')
@@ -147,7 +147,7 @@ Compare pricing between submissions.
 
 ```bash
 # Compare two contractor submissions
-api_post "excel-diff/v3/compare" '{
+api_post "/excel-diff/v3/compare" '{
   "fileData1": "'$CONTRACTOR1_FILE'",
   "fileData2": "'$CONTRACTOR2_FILE'"
 }'
@@ -197,13 +197,13 @@ Use document comparison results with AI evaluation.
 
 ```bash
 # 1. Compare files
-DIFF=$(api_post "excel-diff/v3/compare" '{
+DIFF=$(api_post "/excel-diff/v3/compare" '{
   "fileData1": "'$REF_FILE'",
   "fileData2": "'$SUB_FILE'"
 }')
 
 # 2. Summarize issues with AI
-api_post "agent/summarize-issue" '{
+api_post "/agent/summarize-issue" '{
   "boqId": "'$BOQ_ID'",
   "submissionId": "'$SUBMISSION_ID'",
   "issueData": '$(echo $DIFF | jq -c '.')'

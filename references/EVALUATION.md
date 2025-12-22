@@ -8,7 +8,7 @@ AI-powered document evaluation and tender analysis.
 Analyze documents with AI and generate comprehensive evaluation.
 
 ```bash
-api_post "agent/generate-evaluate" '{
+api_post "/agent/generate-evaluate" '{
   "submissionId": "<uuid>",
   "fileIds": ["<uuid>", "<uuid>"],
   "prompt": "Evaluate this tender submission for technical compliance"
@@ -25,7 +25,7 @@ api_post "agent/generate-evaluate" '{
 Queue evaluation job for background processing.
 
 ```bash
-api_post "agent/generate-evaluate-v2" '{
+api_post "/agent/generate-evaluate-v2" '{
   "submissionId": "<uuid>",
   "submissionEvaluationId": "<uuid>",
   "referenceFileIds": ["<uuid>"],
@@ -41,7 +41,7 @@ api_post "agent/generate-evaluate-v2" '{
 Summarize differences between submission and BOQ.
 
 ```bash
-api_post "agent/summarize-issue" '{
+api_post "/agent/summarize-issue" '{
   "boqId": "<uuid>",
   "submissionId": "<uuid>",
   "issueData": "..."
@@ -52,7 +52,7 @@ api_post "agent/summarize-issue" '{
 Generate structured data for decision paper.
 
 ```bash
-api_post "agent/sign-off-document-composition/<submissionId>"
+api_post "/agent/sign-off-document-composition/<submissionId>"
 # Returns JSON structure for DOCX generation
 ```
 
@@ -60,17 +60,17 @@ api_post "agent/sign-off-document-composition/<submissionId>"
 
 ### Get Templates for Package
 ```bash
-api_get "evaluation/templates/<packageId>"
+api_get "/evaluation/templates/<packageId>"
 ```
 
 ### Get Template for Package Revision
 ```bash
-api_get "evaluation/template/<packageRevisionId>"
+api_get "/evaluation/template/<packageRevisionId>"
 ```
 
 ### Upsert Evaluation Template
 ```bash
-api_post "evaluation/template/upsert" '{
+api_post "/evaluation/template/upsert" '{
   "packageRevisionId": "<uuid>",
   "name": "Technical Evaluation",
   "keyItems": [
@@ -81,7 +81,7 @@ api_post "evaluation/template/upsert" '{
 
 ### Create Evaluation Key Item
 ```bash
-api_post "evaluation/template/create-new-key-item" '{
+api_post "/evaluation/template/create-new-key-item" '{
   "evaluationTemplateId": "<uuid>",
   "key": "new_criteria",
   "description": "New evaluation criteria"
@@ -92,12 +92,12 @@ api_post "evaluation/template/create-new-key-item" '{
 
 ### Get Submission Evaluation
 ```bash
-api_get "evaluation/submission-evaluation/<submissionId>"
+api_get "/evaluation/submission-evaluation/<submissionId>"
 ```
 
 ### Upsert Submission Evaluation
 ```bash
-api_post "evaluation/submission-evaluation/upsert" '{
+api_post "/evaluation/submission-evaluation/upsert" '{
   "submissionId": "<uuid>",
   "evaluationTemplateId": "<uuid>",
   "status": "IN_PROGRESS"
@@ -106,7 +106,7 @@ api_post "evaluation/submission-evaluation/upsert" '{
 
 ### Upsert Evaluation Item
 ```bash
-api_post "evaluation/submission-evaluation-item/upsert" '{
+api_post "/evaluation/submission-evaluation-item/upsert" '{
   "submissionId": "<uuid>",
   "submissionEvaluationId": "<uuid>",
   "key": "technical_score",
@@ -117,7 +117,7 @@ api_post "evaluation/submission-evaluation-item/upsert" '{
 
 ### Batch Upsert Evaluation Items
 ```bash
-api_post "evaluation/submission-evaluation-items/batch-upsert" '{
+api_post "/evaluation/submission-evaluation-items/batch-upsert" '{
   "submissionId": "<uuid>",
   "submissionEvaluationId": "<uuid>",
   "items": [
@@ -133,7 +133,7 @@ api_post "evaluation/submission-evaluation-items/batch-upsert" '{
 Compare multiple submissions.
 
 ```bash
-api_post "evaluation/generate-compare-evaluation/" '{
+api_post "/evaluation/generate-compare-evaluation/" '{
   "packageRevisionId": "<uuid>",
   "submissionIds": ["<uuid>", "<uuid>"],
   "criteria": ["price", "technical", "delivery"]
@@ -142,12 +142,12 @@ api_post "evaluation/generate-compare-evaluation/" '{
 
 ### Get Compare Evaluations
 ```bash
-api_get "evaluation/compare-evaluation/<packageRevisionId>"
+api_get "/evaluation/compare-evaluation/<packageRevisionId>"
 ```
 
 ### Delete Compare Evaluation
 ```bash
-api_delete "evaluation/compare-evaluation/<id>"
+api_delete "/evaluation/compare-evaluation/<id>"
 ```
 
 ## Evaluation Status Values
@@ -171,7 +171,7 @@ api_delete "evaluation/compare-evaluation/<id>"
 
 ```bash
 # 1. Create evaluation template
-TEMPLATE=$(api_post "evaluation/template/upsert" '{
+TEMPLATE=$(api_post "/evaluation/template/upsert" '{
   "packageRevisionId": "'$PKG_REV_ID'",
   "name": "Standard Evaluation",
   "keyItems": [
@@ -182,13 +182,13 @@ TEMPLATE=$(api_post "evaluation/template/upsert" '{
 }')
 
 # 2. Create submission evaluation
-EVAL=$(api_post "evaluation/submission-evaluation/upsert" '{
+EVAL=$(api_post "/evaluation/submission-evaluation/upsert" '{
   "submissionId": "'$SUBMISSION_ID'",
   "evaluationTemplateId": "'$(echo $TEMPLATE | jq -r '.data.id')'"
 }')
 
 # 3. Queue AI evaluation
-api_post "agent/generate-evaluate-v2" '{
+api_post "/agent/generate-evaluate-v2" '{
   "submissionId": "'$SUBMISSION_ID'",
   "submissionEvaluationId": "'$(echo $EVAL | jq -r '.data.id')'",
   "referenceFileIds": ["'$FILE_ID'"],
@@ -196,5 +196,5 @@ api_post "agent/generate-evaluate-v2" '{
 }'
 
 # 4. Check evaluation status
-api_get "evaluation/submission-evaluation/$SUBMISSION_ID"
+api_get "/evaluation/submission-evaluation/$SUBMISSION_ID"
 ```

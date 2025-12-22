@@ -19,7 +19,7 @@ Get all tokens for the current user.
 
 ```bash
 # Requires Microsoft auth or existing CLI token
-api_get "cli-token"
+api_get "/cli-token"
 ```
 
 **Response:**
@@ -87,7 +87,7 @@ Check current token validity and user info.
 ```bash
 api_whoami
 # or
-api_get "auth/me"
+api_get "/auth/me"
 ```
 
 ## Token Format
@@ -117,8 +117,8 @@ source .claude/skills/tender-api/scripts/api.sh
 api_whoami
 
 # Make API calls
-api_get "project"
-api_get "packages?projectId=<uuid>"
+api_get "/project"
+api_get "/packages?projectId=<uuid>"
 ```
 
 ## Best Practices

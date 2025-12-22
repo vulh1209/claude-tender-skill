@@ -10,7 +10,7 @@ RAG-based price data querying and historical price management.
 Query price data using natural language.
 
 ```bash
-api_post "price-history/query" '{
+api_post "/price-history/query" '{
   "query": "What is the current price of cement in Hanoi?",
   "model": "gemini-2.5-flash",
   "filters": {
@@ -38,8 +38,8 @@ api_post "price-history/query" '{
 
 ### Get Query History
 ```bash
-api_get "price-history/query-history"
-api_get "price-history/query-history/<id>"
+api_get "/price-history/query-history"
+api_get "/price-history/query-history/<id>"
 ```
 
 ## Data Sources Management
@@ -48,7 +48,7 @@ api_get "price-history/query-history/<id>"
 Upload price document for RAG indexing.
 
 ```bash
-api_upload "price-history/upload" \
+api_upload "/price-history/upload" \
   "/path/to/price-list.pdf" \
   "productCategory=construction&keywords=cement,steel"
 ```
@@ -59,9 +59,9 @@ api_upload "price-history/upload" \
 
 ### List Data Sources
 ```bash
-api_get "price-history/sources?skip=0&take=20"
-api_get "price-history/sources?sourceType=manual"
-api_get "price-history/sources?keyword=cement"
+api_get "/price-history/sources?skip=0&take=20"
+api_get "/price-history/sources?sourceType=manual"
+api_get "/price-history/sources?keyword=cement"
 ```
 
 **Query Parameters:**
@@ -74,8 +74,8 @@ api_get "price-history/sources?keyword=cement"
 
 ### Get/Delete Data Source
 ```bash
-api_get "price-history/sources/<id>"
-api_delete "price-history/sources/<id>"
+api_get "/price-history/sources/<id>"
+api_delete "/price-history/sources/<id>"
 ```
 
 ### Download Source File
@@ -92,7 +92,7 @@ curl -OJ "$API_URL/price-history/sources/<id>/download-ocr" \
 
 ### Retry Failed Embedding
 ```bash
-api_post "price-history/sources/<id>/retry-embed"
+api_post "/price-history/sources/<id>/retry-embed"
 ```
 
 ## Email Crawl Configuration
@@ -101,7 +101,7 @@ api_post "price-history/sources/<id>/retry-embed"
 Set up automatic email crawling for price updates.
 
 ```bash
-api_post "price-history/email-config" '{
+api_post "/price-history/email-config" '{
   "email": "procurement@company.com",
   "password": "app-password",
   "keywords": ["price list", "quotation"],
@@ -111,14 +111,14 @@ api_post "price-history/email-config" '{
 
 ### List/Delete Email Configs
 ```bash
-api_get "price-history/email-configs"
-api_delete "price-history/email-config/<id>"
+api_get "/price-history/email-configs"
+api_delete "/price-history/email-config/<id>"
 ```
 
 ### Trigger Email Crawl
 ```bash
-api_post "price-history/email-config/<id>/crawl"
-api_post "price-history/email-crawl-all"
+api_post "/price-history/email-config/<id>/crawl"
+api_post "/price-history/email-crawl-all"
 ```
 
 ## Web Crawl Configuration
@@ -127,7 +127,7 @@ api_post "price-history/email-crawl-all"
 Set up scheduled web scraping.
 
 ```bash
-api_post "price-history/web-crawl-configs" '{
+api_post "/price-history/web-crawl-configs" '{
   "name": "Steel Prices Monitor",
   "url": "https://example.com/steel-prices",
   "schedule": "0 8 * * *",
@@ -140,32 +140,32 @@ api_post "price-history/web-crawl-configs" '{
 
 ### Manage Web Crawl Configs
 ```bash
-api_get "price-history/web-crawl-configs?skip=0&take=20"
-api_get "price-history/web-crawl-configs/<id>"
-api_patch "price-history/web-crawl-configs/<id>" '{"schedule": "0 9 * * *"}'
-api_delete "price-history/web-crawl-configs/<id>"
+api_get "/price-history/web-crawl-configs?skip=0&take=20"
+api_get "/price-history/web-crawl-configs/<id>"
+api_patch "/price-history/web-crawl-configs/<id>" '{"schedule": "0 9 * * *"}'
+api_delete "/price-history/web-crawl-configs/<id>"
 ```
 
 ### Trigger Web Crawl
 ```bash
-api_post "price-history/web-crawl-configs/<id>/trigger"
+api_post "/price-history/web-crawl-configs/<id>/trigger"
 ```
 
 ## Price Items
 
 ### Get All Price Items
 ```bash
-api_get "price-history/price-items/all?skip=0&take=50"
+api_get "/price-history/price-items/all?skip=0&take=50"
 ```
 
 ### Get Price Items for Config
 ```bash
-api_get "price-history/price-items?configId=<uuid>&skip=0&take=50"
+api_get "/price-history/price-items?configId=<uuid>&skip=0&take=50"
 ```
 
 ### Get Price History for Item
 ```bash
-api_get "price-history/price-items/<id>/history"
+api_get "/price-history/price-items/<id>/history"
 ```
 
 ## Processing Status
@@ -189,19 +189,19 @@ api_get "price-history/price-items/<id>/history"
 
 ```bash
 # 1. Upload price document
-SOURCE=$(api_upload "price-history/upload" \
+SOURCE=$(api_upload "/price-history/upload" \
   "cement-prices.pdf" \
   "productCategory=construction&keywords=cement,building")
 
 # 2. Wait for processing (check status)
-api_get "price-history/sources/$(echo $SOURCE | jq -r '.id')"
+api_get "/price-history/sources/$(echo $SOURCE | jq -r '.id')"
 
 # 3. Query prices
-api_post "price-history/query" '{
+api_post "/price-history/query" '{
   "query": "What is the cheapest cement option available?",
   "model": "gemini-2.5-flash"
 }'
 
 # 4. View query history
-api_get "price-history/query-history"
+api_get "/price-history/query-history"
 ```
