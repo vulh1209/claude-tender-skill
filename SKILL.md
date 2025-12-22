@@ -1,6 +1,6 @@
 ---
 name: tender-api
-description: "Interact with Tender App backend APIs for construction tender management. Actions: evaluate documents with AI, query price history with RAG, compare Excel files, manage projects/packages/BOQs/submissions. Use when user asks about tender evaluation, price intelligence, document comparison, project management, or needs to call Tender App APIs. Requires TENDER_CLI_TOKEN environment variable."
+description: "Interact with Tender App backend APIs for construction tender management. Actions: global search (projects/packages/submissions/contractors), evaluate documents with AI, query price history with RAG, compare Excel files. Use when user asks to find/search/list projects, packages, submissions, contractors, or needs tender evaluation, price intelligence, document comparison. Requires TENDER_CLI_TOKEN environment variable."
 allowed-tools: Bash, Read, Grep, Glob
 ---
 
@@ -83,6 +83,61 @@ API responses are JSON. Use `jq` for parsing:
 
 ```bash
 api_get "/project" | jq '.data[].name'
+```
+
+---
+
+## Global Search (Quick Lookup)
+
+Use these functions to quickly find projects, packages, submissions, and contractors:
+
+### Search Across All Entities
+```bash
+global_search "highway"
+# Returns matching projects, packages, and contractors
+```
+
+### Search by Entity Type
+```bash
+# Search projects
+search_projects "construction"
+
+# Search packages (optionally within a project)
+search_packages "electrical"
+search_packages "electrical" "project-uuid"
+
+# Search submissions (optionally within a package)
+search_submissions "ABC Corp"
+search_submissions "ABC Corp" "package-uuid"
+
+# Search contractors
+search_contractors "company name"
+```
+
+### Quick Lookup by ID
+```bash
+# Get project with all packages
+get_project_details "project-uuid"
+
+# Get package with submissions summary
+get_package_details "package-uuid"
+
+# Get submission details
+get_submission_details "submission-uuid"
+
+# Get contractor details
+get_contractor_details "contractor-uuid"
+```
+
+### List All
+```bash
+# List projects (default: 25)
+list_projects
+list_projects 50
+
+# List contractors (default: 50)
+list_contractors
+list_contractors 100
 ```
 
 ---

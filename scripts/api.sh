@@ -153,6 +153,177 @@ api_whoami() {
   fi
 }
 
+# =============================================================================
+# GLOBAL SEARCH FUNCTIONS
+# Quick lookup for projects, packages, submissions, contractors
+# =============================================================================
+
+# Search projects by name
+# Usage: search_projects "keyword"
+search_projects() {
+  check_auth || return 1
+  local keyword="$1"
+  local take="${2:-50}"
+  echo -e "${YELLOW}Searching projects: ${keyword}${NC}"
+  api_get "/project?skip=0&take=${take}" | jq --arg q "$keyword" '.data | map(select(.name | test($q; "i"))) | .[] | {id, name, description, status, createdAt}'
+}
+
+# Search packages by name (across all projects or specific project)
+# Usage: search_packages "keyword" [projectId]
+search_packages() {
+  check_auth || return 1
+  local keyword="$1"
+  local projectId="$2"
+  echo -e "${YELLOW}Searching packages: ${keyword}${NC}"
+
+  if [ -n "$projectId" ]; then
+    api_get "/project/${projectId}" | jq --arg q "$keyword" '.packages | map(select(.name | test($q; "i"))) | .[] | {id, name, description, projectId}'
+  else
+    # Search across all projects
+    api_get "/project?skip=0&take=100" | jq --arg q "$keyword" '.data[].packages | .[]? | select(.name | test($q; "i")) | {id, name, description, projectId}'
+  fi
+}
+
+# Search submissions by contractor name or package
+# Usage: search_submissions "keyword" [packageId]
+search_submissions() {
+  check_auth || return 1
+  local keyword="$1"
+  local packageId="$2"
+  echo -e "${YELLOW}Searching submissions: ${keyword}${NC}"
+
+  if [ -n "$packageId" ]; then
+    api_get "/submission?packageId=${packageId}&skip=0&take=100" | jq --arg q "$keyword" '.data | map(select(.contractor.name | test($q; "i") // .packageVersion.name | test($q; "i"))) | .[] | {id, contractorName: .contractor.name, packageName: .packageVersion.name, status: .evaluationStatus, createdAt}'
+  else
+    # Need to iterate through packages
+    echo "Tip: Provide packageId for faster search"
+    api_get "/project?skip=0&take=50" | jq -r '.data[].packages[]?.id' | while read pkgId; do
+      api_get "/submission?packageId=${pkgId}&skip=0&take=50" 2>/dev/null | jq --arg q "$keyword" '.data[]? | select(.contractor.name | test($q; "i") // false) | {id, contractorName: .contractor.name, packageId}'
+    done
+  fi
+}
+
+# Search contractors by name
+# Usage: search_contractors "keyword"
+search_contractors() {
+  check_auth || return 1
+  local keyword="$1"
+  echo -e "${YELLOW}Searching contractors: ${keyword}${NC}"
+  api_get "/contractor?skip=0&take=100" | jq --arg q "$keyword" '.data | map(select(.name | test($q; "i"))) | .[] | {id, name, email, phone, address}'
+}
+
+# Get project details with all packages
+# Usage: get_project_details <projectId>
+get_project_details() {
+  check_auth || return 1
+  local projectId="$1"
+  if [ -z "$projectId" ]; then
+    echo -e "${RED}Usage: get_project_details <projectId>${NC}"
+    return 1
+  fi
+  echo -e "${YELLOW}Project Details: ${projectId}${NC}"
+  api_get "/project/${projectId}" | jq '{id, name, description, status, createdAt, packages: [.packages[]? | {id, name, description}]}'
+}
+
+# Get package details with submissions summary
+# Usage: get_package_details <packageId>
+get_package_details() {
+  check_auth || return 1
+  local packageId="$1"
+  if [ -z "$packageId" ]; then
+    echo -e "${RED}Usage: get_package_details <packageId>${NC}"
+    return 1
+  fi
+  echo -e "${YELLOW}Package Details: ${packageId}${NC}"
+
+  # Get package info
+  local package_info=$(api_get "/package/${packageId}")
+
+  # Get submissions for this package
+  local submissions=$(api_get "/submission?packageId=${packageId}&skip=0&take=100")
+
+  echo "$package_info" | jq '.'
+  echo ""
+  echo -e "${YELLOW}Submissions:${NC}"
+  echo "$submissions" | jq '.data | .[] | {id, contractor: .contractor.name, status: .evaluationStatus, createdAt}'
+}
+
+# Get submission details with evaluation
+# Usage: get_submission_details <submissionId>
+get_submission_details() {
+  check_auth || return 1
+  local submissionId="$1"
+  if [ -z "$submissionId" ]; then
+    echo -e "${RED}Usage: get_submission_details <submissionId>${NC}"
+    return 1
+  fi
+  echo -e "${YELLOW}Submission Details: ${submissionId}${NC}"
+  api_get "/submission/${submissionId}" | jq '{id, contractor: .contractor, packageVersion: .packageVersion.name, evaluationStatus, createdAt, files: [.files[]? | {id, name, type}]}'
+}
+
+# Get contractor details
+# Usage: get_contractor_details <contractorId>
+get_contractor_details() {
+  check_auth || return 1
+  local contractorId="$1"
+  if [ -z "$contractorId" ]; then
+    echo -e "${RED}Usage: get_contractor_details <contractorId>${NC}"
+    return 1
+  fi
+  echo -e "${YELLOW}Contractor Details: ${contractorId}${NC}"
+  api_get "/contractor/${contractorId}" | jq '.'
+}
+
+# List all projects (quick overview)
+# Usage: list_projects [take]
+list_projects() {
+  check_auth || return 1
+  local take="${1:-25}"
+  echo -e "${YELLOW}Projects (top ${take}):${NC}"
+  api_get "/project?skip=0&take=${take}" | jq '.data | .[] | {id, name, status, packagesCount: (.packages | length)}'
+}
+
+# List all contractors
+# Usage: list_contractors [take]
+list_contractors() {
+  check_auth || return 1
+  local take="${1:-50}"
+  echo -e "${YELLOW}Contractors (top ${take}):${NC}"
+  api_get "/contractor?skip=0&take=${take}" | jq '.data | .[] | {id, name, email}'
+}
+
+# Global search across all entities
+# Usage: global_search "keyword"
+global_search() {
+  check_auth || return 1
+  local keyword="$1"
+  if [ -z "$keyword" ]; then
+    echo -e "${RED}Usage: global_search \"keyword\"${NC}"
+    return 1
+  fi
+
+  echo -e "${GREEN}=== Global Search: ${keyword} ===${NC}"
+  echo ""
+
+  echo -e "${YELLOW}📁 Projects:${NC}"
+  search_projects "$keyword" 2>/dev/null | head -20
+  echo ""
+
+  echo -e "${YELLOW}📦 Packages:${NC}"
+  search_packages "$keyword" 2>/dev/null | head -20
+  echo ""
+
+  echo -e "${YELLOW}🏢 Contractors:${NC}"
+  search_contractors "$keyword" 2>/dev/null | head -20
+  echo ""
+
+  echo -e "${GREEN}=== End Search ===${NC}"
+}
+
+# =============================================================================
+# HELP
+# =============================================================================
+
 # Print help
 api_help() {
   echo "Tender App API Helper Functions"
@@ -162,7 +333,7 @@ api_help() {
   echo "  export TENDER_CLI_TOKEN=\"tnd_your_token\""
   echo "  export TENDER_API_URL=\"https://tender-api.sipher.gg/api\"  # optional"
   echo ""
-  echo "Functions:"
+  echo "Basic Functions:"
   echo "  api_get \"/endpoint\"                    - GET request"
   echo "  api_post \"/endpoint\" '{\"json\":\"body\"}'  - POST request"
   echo "  api_put \"/endpoint\" '{\"json\":\"body\"}'   - PUT request"
@@ -172,12 +343,27 @@ api_help() {
   echo "  api_download \"/endpoint\" \"/output\"     - Download file"
   echo "  api_health                             - Check API health"
   echo "  api_whoami                             - Check authentication"
-  echo "  api_help                               - Show this help"
+  echo ""
+  echo "Global Search Functions:"
+  echo "  global_search \"keyword\"                - Search across all entities"
+  echo "  search_projects \"keyword\"              - Search projects by name"
+  echo "  search_packages \"keyword\" [projectId]  - Search packages"
+  echo "  search_submissions \"keyword\" [pkgId]   - Search submissions"
+  echo "  search_contractors \"keyword\"           - Search contractors"
+  echo ""
+  echo "Quick Lookup Functions:"
+  echo "  list_projects [take]                   - List all projects"
+  echo "  list_contractors [take]                - List all contractors"
+  echo "  get_project_details <id>               - Get project with packages"
+  echo "  get_package_details <id>               - Get package with submissions"
+  echo "  get_submission_details <id>            - Get submission details"
+  echo "  get_contractor_details <id>            - Get contractor details"
   echo ""
   echo "Examples:"
+  echo "  global_search \"highway\"                 - Find anything with 'highway'"
+  echo "  search_projects \"construction\"          - Find construction projects"
+  echo "  get_project_details \"abc-123\"           - Get project details"
   echo "  api_get \"/project?skip=0&take=10\" | jq '.data'"
-  echo "  api_post \"/price-history/query\" '{\"query\": \"cement price\"}'"
-  echo "  api_upload \"/price-history/upload\" \"file\" \"./prices.xlsx\""
 }
 
 # Print status on source
