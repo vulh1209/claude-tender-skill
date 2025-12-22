@@ -6,9 +6,11 @@ Manage CLI tokens for authentication with Tender API.
 
 ## Authentication Flow
 
-1. User authenticates via Microsoft in web UI
-2. Generates CLI token in Settings > CLI Tokens
-3. Uses token for CLI/automation access
+1. Go to **https://tender.sipher.gg/cli-tokens**
+2. Authenticate via Microsoft if prompted
+3. Generate a new CLI token
+4. Copy and store the token securely
+5. Use token for CLI/automation access
 
 ## Endpoints
 

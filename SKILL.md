@@ -12,19 +12,24 @@ Enables Claude Code to interact with the Tender App backend APIs for constructio
 
 ### 1. CLI Token Setup
 
-Before using this skill, you need a CLI token. See [references/AUTH.md](references/AUTH.md) for setup instructions.
+Before using this skill, you need a CLI token:
+
+1. Go to **https://tender.sipher.gg/cli-tokens**
+2. Generate a new token and copy it
+3. Set the environment variable:
 
 ```bash
-# Check if token is configured
-echo $TENDER_CLI_TOKEN
+export TENDER_CLI_TOKEN="tnd_your_token_here"
 ```
+
+See [references/AUTH.md](references/AUTH.md) for detailed setup instructions.
 
 ### 2. API Server
 
-Ensure the backend server is running:
+The skill connects to the production API by default:
 ```bash
-# Default: http://localhost:3000/api
-# Override with TENDER_API_URL environment variable
+# Default: https://tender-api.sipher.gg/api
+# Override with TENDER_API_URL environment variable if needed
 ```
 
 ---

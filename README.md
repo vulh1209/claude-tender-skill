@@ -13,17 +13,17 @@ A Claude Code skill that enables interaction with Tender App backend APIs for co
 ## Quick Install
 
 ```bash
-git clone https://github.com/anthropics/claude-tender-skill.git ~/.claude/skills/tender-api
+git clone https://github.com/vulh1209/claude-tender-skill.git ~/.claude/skills/tender-api
 ```
 
 ## Setup
 
 ### 1. Get a CLI Token
 
-1. Log in to Tender App at `https://your-tender-app.com`
-2. Go to **Settings** → **CLI Tokens**
+1. Go to **https://tender.sipher.gg/cli-tokens**
+2. Login with Microsoft if prompted
 3. Click **Generate Token**
-4. Copy the export command
+4. Copy the token
 
 ### 2. Configure Environment
 
@@ -109,7 +109,7 @@ claude-tender-skill/
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `TENDER_CLI_TOKEN` | Yes | Your CLI authentication token |
-| `TENDER_API_URL` | No | API base URL (default: `http://localhost:3000/api`) |
+| `TENDER_API_URL` | No | API base URL (default: `https://tender-api.sipher.gg/api`) |
 
 ## Troubleshooting
 

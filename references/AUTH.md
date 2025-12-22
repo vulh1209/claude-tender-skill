@@ -18,8 +18,8 @@ CLI tokens allow you to authenticate with the Tender App API from command-line t
 
 ### Option 1: Via UI (Recommended)
 
-1. Login to Tender App at `http://localhost:3001`
-2. Navigate to **Settings > CLI Tokens**
+1. Go to **https://tender.sipher.gg/cli-tokens**
+2. Login with Microsoft if prompted
 3. Click **Generate New Token**
 4. Enter a descriptive name (e.g., "Claude Code CLI")
 5. Optionally set an expiration (1-365 days)
@@ -38,7 +38,7 @@ If you have a Microsoft token (from browser dev tools):
 
 MICROSOFT_TOKEN="eyJ0eXAiOiJKV1QiLCJub25jZSI..."
 
-curl -X POST "http://localhost:3000/api/cli-token/generate" \
+curl -X POST "https://tender-api.sipher.gg/api/cli-token/generate" \
   -H "Authorization: Bearer ${MICROSOFT_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"name": "Claude Code CLI"}'
@@ -73,8 +73,8 @@ Add to your shell profile (`~/.bashrc`, `~/.zshrc`, or `~/.profile`):
 # Tender App CLI Token
 export TENDER_CLI_TOKEN="tnd_your_token_here"
 
-# Optional: Override API URL
-export TENDER_API_URL="http://localhost:3000/api"
+# Optional: Override API URL (defaults to production)
+export TENDER_API_URL="https://tender-api.sipher.gg/api"
 ```
 
 Then reload:
@@ -87,7 +87,7 @@ source ~/.zshrc  # or ~/.bashrc
 Create or edit `~/.claude/.env`:
 ```
 TENDER_CLI_TOKEN=tnd_your_token_here
-TENDER_API_URL=http://localhost:3000/api
+TENDER_API_URL=https://tender-api.sipher.gg/api
 ```
 
 ---
@@ -120,14 +120,14 @@ Authenticated as:
 ### List Your Tokens
 
 ```bash
-curl -X GET "http://localhost:3000/api/cli-token" \
+curl -X GET "https://tender-api.sipher.gg/api/cli-token" \
   -H "Authorization: Bearer ${MICROSOFT_TOKEN}"
 ```
 
 ### Revoke a Token
 
 ```bash
-curl -X DELETE "http://localhost:3000/api/cli-token/{token-id}" \
+curl -X DELETE "https://tender-api.sipher.gg/api/cli-token/{token-id}" \
   -H "Authorization: Bearer ${MICROSOFT_TOKEN}"
 ```
 
@@ -191,10 +191,9 @@ Your user account has been deactivated. Contact an administrator.
 
 ### "Connection refused"
 
-The backend server is not running:
+Check your network connection and ensure the API server is accessible:
 ```bash
-# Start the backend
-cd packages/backend && pnpm dev
+curl https://tender-api.sipher.gg/api/health
 ```
 
 ---

@@ -3,7 +3,7 @@
 # Usage: source .claude/skills/tender-api/scripts/api.sh
 
 # Configuration
-TENDER_API_URL="${TENDER_API_URL:-http://localhost:3000/api}"
+TENDER_API_URL="${TENDER_API_URL:-https://tender-api.sipher.gg/api}"
 TENDER_CLI_TOKEN="${TENDER_CLI_TOKEN}"
 
 # Colors for output
@@ -18,8 +18,8 @@ check_auth() {
     echo -e "${RED}Error: TENDER_CLI_TOKEN not set${NC}"
     echo ""
     echo "To set up authentication:"
-    echo "1. Login to Tender App UI"
-    echo "2. Go to Settings > CLI Tokens"
+    echo "1. Go to https://tender.sipher.gg/cli-tokens"
+    echo "2. Login with Microsoft if prompted"
     echo "3. Generate a new token"
     echo "4. Run: export TENDER_CLI_TOKEN=\"tnd_your_token_here\""
     return 1
@@ -160,7 +160,7 @@ api_help() {
   echo ""
   echo "Setup:"
   echo "  export TENDER_CLI_TOKEN=\"tnd_your_token\""
-  echo "  export TENDER_API_URL=\"http://localhost:3000/api\"  # optional"
+  echo "  export TENDER_API_URL=\"https://tender-api.sipher.gg/api\"  # optional"
   echo ""
   echo "Functions:"
   echo "  api_get \"/endpoint\"                    - GET request"
