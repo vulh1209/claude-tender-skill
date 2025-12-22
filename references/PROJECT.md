@@ -2,6 +2,34 @@
 
 Manage projects, packages, BOQs, and contractors.
 
+## Global Search
+
+Search across all entities (projects, packages, submissions, BOQs, contractors) in a single query.
+
+```bash
+# Search across all entities
+api_get "/global-search?search=keyword&skip=0&take=10"
+
+# URL encode special characters (e.g., / becomes %2F)
+api_get "/global-search?search=09%2F12%2F2025&skip=0&take=10"
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {"id": "uuid", "name": "Package Name", "type": "package"},
+    {"id": "uuid", "name": "Submission Name", "type": "submission"},
+    {"id": "uuid", "name": "Project Name", "type": "project"}
+  ],
+  "total": 3
+}
+```
+
+**Entity Types:** `project`, `package`, `submission`, `boq`, `contractor`
+
+---
+
 ## Projects
 
 ### List Projects
