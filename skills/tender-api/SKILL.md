@@ -30,6 +30,18 @@ source ${CLAUDE_PLUGIN_ROOT}/scripts/api.sh
 
 ---
 
+## Key Concepts
+
+### PERFECT IDEAL Contractor
+"PERFECT IDEAL" is a **system-generated virtual contractor**, NOT a real contractor. Key points:
+- Created automatically by the system for each package
+- Represents the ideal/baseline submission based on the original BOQ (Bill of Quantities)
+- Used as a reference point for comparing actual contractor submissions
+- When you see `perfectIdeal` in API responses, it refers to this system-generated baseline
+- Do NOT treat it as an actual contractor when analyzing or reporting data
+
+---
+
 ## Quick Reference
 
 | Category | Use Case | Reference |

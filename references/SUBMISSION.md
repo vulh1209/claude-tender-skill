@@ -45,6 +45,8 @@ api_delete "/submissions/<id>"
 ### Get Perfect Ideal Submission
 Get the reference/ideal submission for comparison.
 
+> **⚠️ Important:** "PERFECT IDEAL" is a **system-generated virtual contractor**, NOT a real contractor. It represents the ideal/baseline submission created automatically by the system based on the original BOQ (Bill of Quantities) from the package. This serves as a reference point for comparing actual contractor submissions against the expected/ideal values.
+
 ```bash
 api_get "/submissions/perfect-ideal/<packageRevisionId>"
 ```
@@ -84,6 +86,8 @@ api_post "/submissions/compare-submissions" '{
   }
 }
 ```
+
+> **Note:** The `perfectIdeal` field in the response represents values from the **system-generated PERFECT IDEAL submission** (see above), which serves as the baseline/reference. It is NOT a real contractor submission but rather the ideal values from the original BOQ for comparison purposes.
 
 ### Get Package Value
 Get aggregated values for package.
