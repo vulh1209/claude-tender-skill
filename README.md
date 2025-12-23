@@ -39,6 +39,12 @@ Add to your project's `.claude/settings.json`:
 }
 ```
 
+### Option 4: Test locally during development
+
+```bash
+claude --plugin-dir ./claude-tender-skill
+```
+
 ## Setup
 
 ### 1. Get a CLI Token
@@ -67,7 +73,7 @@ source ~/.zshrc
 Open Claude Code and run:
 
 ```
-/tender-setup
+/tender-api:tender-setup
 ```
 
 Or ask:
@@ -82,8 +88,8 @@ Or ask:
 
 | Command | Description |
 |---------|-------------|
-| `/tender-search "keyword"` | Quick search across all entities |
-| `/tender-setup` | Set up authentication |
+| `/tender-api:tender-search "keyword"` | Quick search across all entities |
+| `/tender-api:tender-setup` | Set up authentication |
 
 ### Natural Language
 
@@ -107,26 +113,29 @@ The `tender-api` skill is automatically triggered when you ask about:
 ## Directory Structure
 
 ```
-tender-api/
-├── plugin.json           # Plugin manifest
-├── README.md             # This file
-├── SKILL.md              # Legacy skill definition
-├── skills/
-│   └── tender-api.md     # Main skill
-├── commands/
-│   ├── tender-search.md  # /tender-search command
-│   └── tender-setup.md   # /tender-setup command
-├── scripts/
+claude-tender-skill/
+├── .claude-plugin/
+│   └── plugin.json       # Plugin manifest (required, metadata only)
+├── commands/             # Slash commands (auto-discovered)
+│   ├── tender-search.md  # /tender-api:tender-search command
+│   └── tender-setup.md   # /tender-api:tender-setup command
+├── skills/               # Agent skills (auto-discovered)
+│   └── tender-api/
+│       └── SKILL.md      # Main skill definition
+├── scripts/              # Helper scripts
 │   └── api.sh            # API helper functions
-└── references/
-    ├── AUTH.md           # Authentication guide
-    ├── CLI-TOKEN.md      # Token management API
-    ├── EVALUATION.md     # AI evaluation endpoints
-    ├── PRICE-INTELLIGENCE.md  # RAG price queries
-    ├── PROJECT.md        # Project management
-    ├── SUBMISSION.md     # Submission handling
-    ├── DOCUMENT-COMPARISON.md # Excel diff
-    └── WORKFLOWS.md      # End-to-end examples
+├── references/           # API documentation
+│   ├── AUTH.md           # Authentication guide
+│   ├── CLI-TOKEN.md      # Token management API
+│   ├── EVALUATION.md     # AI evaluation endpoints
+│   ├── PRICE-INTELLIGENCE.md  # RAG price queries
+│   ├── PROJECT.md        # Project management
+│   ├── SUBMISSION.md     # Submission handling
+│   ├── DOCUMENT-COMPARISON.md # Excel diff
+│   └── WORKFLOWS.md      # End-to-end examples
+├── LICENSE               # MIT License
+├── CHANGELOG.md          # Version history
+└── README.md             # This file
 ```
 
 ## API Reference
@@ -152,7 +161,7 @@ tender-api/
 
 ### Plugin Not Detected
 
-1. Verify plugin location: `ls ~/.claude/plugins/tender-api/plugin.json`
+1. Verify plugin location: `ls ~/.claude/plugins/tender-api/.claude-plugin/plugin.json`
 2. Restart Claude Code session
 3. Check plugin.json syntax is valid JSON
 
@@ -166,9 +175,9 @@ echo $TENDER_CLI_TOKEN
 
 ### Skill Not Triggering
 
-Make sure you have sourced the API helper:
+Make sure to source the API helper in skills:
 ```bash
-source ~/.claude/plugins/tender-api/scripts/api.sh
+source ${CLAUDE_PLUGIN_ROOT}/scripts/api.sh
 ```
 
 ### Permission Denied on Script
@@ -186,4 +195,4 @@ chmod +x ~/.claude/plugins/tender-api/scripts/api.sh
 
 ## License
 
-MIT License
+MIT License - see [LICENSE](LICENSE) for details.

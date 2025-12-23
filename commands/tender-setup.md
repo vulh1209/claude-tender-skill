@@ -1,6 +1,5 @@
 ---
-name: tender-setup
-description: Set up Tender API authentication
+description: Set up Tender API authentication and verify connection
 allowed-tools: Bash, Read
 ---
 

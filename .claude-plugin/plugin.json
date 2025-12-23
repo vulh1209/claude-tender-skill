@@ -1,0 +1,20 @@
+{
+  "name": "tender-api",
+  "version": "1.0.0",
+  "description": "Interact with Tender App backend APIs for construction tender management. Search across projects, packages, submissions, contractors. Evaluate documents with AI, query price history with RAG, compare Excel files.",
+  "author": {
+    "name": "vulh1209",
+    "url": "https://github.com/vulh1209"
+  },
+  "homepage": "https://github.com/vulh1209/claude-tender-skill",
+  "repository": "https://github.com/vulh1209/claude-tender-skill",
+  "license": "MIT",
+  "keywords": [
+    "tender",
+    "construction",
+    "procurement",
+    "bidding",
+    "api",
+    "project-management"
+  ]
+}

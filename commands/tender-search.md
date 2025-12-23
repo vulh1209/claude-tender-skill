@@ -1,11 +1,7 @@
 ---
-name: tender-search
-description: Quick search across Tender App entities
+description: Quick search across Tender App entities (projects, packages, submissions, contractors)
 allowed-tools: Bash, Read
-arguments:
-  - name: query
-    description: Search keyword (e.g., "highway", "09/12/2025", "ABC Corp")
-    required: true
+argument-hint: [query]
 ---
 
 # Tender Search Command
@@ -37,9 +33,13 @@ Search across all Tender App entities (projects, packages, submissions, contract
    - Name
    - ID
 
+## Search Query
+
+Search for: **$ARGUMENTS**
+
 ## Example
 
-User: `/tender-search "09/12/2025"`
+User: `/tender-api:tender-search 09/12/2025`
 
 Response:
 ```
