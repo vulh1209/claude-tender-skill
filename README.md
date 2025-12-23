@@ -13,21 +13,31 @@ A Claude Code plugin that enables interaction with Tender App backend APIs for c
 
 ## Installation
 
-### Option 1: Clone to plugins directory (Recommended)
+### Option 1: Install from GitHub (Recommended)
+
+```bash
+# Add the marketplace
+/plugin marketplace add vulh1209/claude-tender-skill
+
+# Install the plugin
+/plugin install tender-api@tender-api-marketplace
+```
+
+### Option 2: Clone to plugins directory
 
 ```bash
 # Clone directly to Claude Code plugins
 git clone https://github.com/vulh1209/claude-tender-skill.git ~/.claude/plugins/tender-api
 ```
 
-### Option 2: Symlink from development location
+### Option 3: Symlink from development location
 
 ```bash
 # If you have the repo elsewhere, create a symlink
 ln -s /path/to/claude-tender-skill ~/.claude/plugins/tender-api
 ```
 
-### Option 3: Add to project-specific plugins
+### Option 4: Add to project-specific plugins
 
 Add to your project's `.claude/settings.json`:
 
@@ -39,7 +49,7 @@ Add to your project's `.claude/settings.json`:
 }
 ```
 
-### Option 4: Test locally during development
+### Option 5: Test locally during development
 
 ```bash
 claude --plugin-dir ./claude-tender-skill
@@ -115,7 +125,8 @@ The `tender-api` skill is automatically triggered when you ask about:
 ```
 claude-tender-skill/
 ├── .claude-plugin/
-│   └── plugin.json       # Plugin manifest (required, metadata only)
+│   ├── plugin.json       # Plugin manifest (required, metadata only)
+│   └── marketplace.json  # Marketplace config for GitHub installation
 ├── commands/             # Slash commands (auto-discovered)
 │   ├── tender-search.md  # /tender-api:tender-search command
 │   └── tender-setup.md   # /tender-api:tender-setup command
